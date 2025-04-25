@@ -130,6 +130,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
+
 		MatrixScreenPrintf(0, 20, worldMatrix, "worldMatrix");
 
 		///
