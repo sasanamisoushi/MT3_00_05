@@ -14,6 +14,50 @@ struct Matrix4x4 {
 	float m[4][4];
 };
 
+//x軸回転行列
+Matrix4x4 MakeRoteXMatrix(float radian) {
+	Matrix4x4 result = {
+		1,0,0,0,
+		0,cosf(radian),sinf(radian),0,
+		0,-sinf(radian),cosf(radian),0,
+		0,0,0,1,
+	};
+	return result;
+}
+
+//Y軸回転行列
+Matrix4x4 MakeRotateYMatrix(float radian) {
+	Matrix4x4 result = {
+		cosf(radian),0,-sinf(radian),0,
+		0,1,0,0,
+		sinf(radian),0,cosf(radian),0,
+		0,0,0,1,
+	};
+	return result;
+}
+
+//Z軸回転行列
+Matrix4x4 MakeRotateZMatrix(float radian) {
+	Matrix4x4 result = {
+		cosf(radian),sinf(radian),0,0,
+		-sinf(radian),cosf(radian),0,0,
+		0,0,1,0,
+		0,0,0,1,
+	};
+	return result;
+}
+
+//平行移動行列
+Matrix4x4 MakeTranslateMatrix(const Vector3 &translate) {
+	Matrix4x4 result = {
+	  1, 0, 0, 0,
+	  0, 1, 0, 0,
+	  0, 0, 1, 0,
+	 translate.x, translate.y, translate.z, 1
+	};
+	return result;
+}
+
 //積
 Matrix4x4 Multiply(const Matrix4x4 &m1, const Matrix4x4 &m2) {
 	Matrix4x4 result = {};
@@ -39,46 +83,8 @@ Matrix4x4 MakeAffineMatrox(const Vector3 &scale, const Vector3 &rotate, const Ve
 		0,       0,       0,       1
 	};
 
-	// 回転行列（X軸）
-	float cosX = cosf(rotate.x);
-	float sinX = sinf(rotate.x);
-	Matrix4x4 rotX = {
-		1,  0,     0,    0,
-		0,  cosX, sinX, 0,
-		0,  -sinX, cosX,  0,
-		0,  0,     0,    1
-	};
-
-	// 回転行列（Y軸）
-	float cosY = cosf(rotate.y);
-	float sinY = sinf(rotate.y);
-	Matrix4x4 rotY = {
-		cosY,  0, -sinY, 0,
-		0,     1, 0,    0,
-		sinY, 0, cosY, 0,
-		0,     0, 0,    1
-	};
-
-	// 回転行列（Z軸）
-	float cosZ = cosf(rotate.z);
-	float sinZ = sinf(rotate.z);
-	Matrix4x4 rotZ = {
-		cosZ, sinZ, 0, 0,
-		-sinZ, cosZ,  0, 0,
-		0,    0,     1, 0,
-		0,    0,     0, 1
-	};
-
-	// 平行移動行列
-	Matrix4x4 transMat = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		translate.x, translate.y, translate.z, 1
-	};
-
-	Matrix4x4 rot = Multiply(Multiply(rotX, rotY), rotZ);
-	result = Multiply(Multiply(scaleMat, rot), transMat);
+	Matrix4x4 rot = Multiply(Multiply(MakeRoteXMatrix(rotate.x), MakeRotateYMatrix(rotate.y)), MakeRotateZMatrix(rotate.z));
+	result = Multiply(Multiply(scaleMat, rot), MakeTranslateMatrix(translate));
 
 	return result;
 }
